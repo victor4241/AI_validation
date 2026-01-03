@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>AI Technical Validation</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial;
+    background: radial-gradient(circle at top, #020617, #000);
+    color: #e5e7eb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 440px;
+    background: #020617;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(56,189,248,0.25);
+    padding: 25px;
+}
+
+h2 {
+    text-align: center;
+    color: #38bdf8;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 15px;
+}
+
+.timer {
+    text-align: center;
+    font-size: 18px;
+    color: #f87171;
+    margin-bottom: 15px;
+}
+
+label {
+    font-size: 13px;
+    display: block;
+    margin-top: 12px;
+}
+
+textarea {
+    width: 100%;
+    background: #020617;
+    border: 1px solid #1e293b;
+    color: #e5e7eb;
+    border-radius: 6px;
+    padding: 8px;
+    margin-top: 5px;
+    resize: none;
+}
+
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: linear-gradient(90deg,#38bdf8,#0ea5e9);
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.result {
+    text-align: center;
+    color: #f87171;
+    font-weight: bold;
+    margin-top: 20px;
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>AI Human Validation</h2>
+    <div class="subtitle">Timed Technical Assessment</div>
+
+    <div class="timer" id="timer">⏳ 30 s</div>
+
+    <div id="questions"></div>
+
+    <button onclick="nextStep()">Next</button>
+
+    <div class="result" id="result">❌ ACCESS DENIED – Time or level insufficient</div>
+</div>
+
+<script>
+const steps = [
+    [
+        "1️⃣ Explique la différence entre GAN et Diffusion Model.",
+        "2️⃣ Pourquoi l’IA vidéo nécessite un GPU ?"
+    ],
+    [
+        "3️⃣ Pourquoi un dataset doit être aligné (landmarks faciaux) ?",
+        "4️⃣ Cite un problème réel rencontré en IA ou vidéo."
+    ],
+    [
+        "5️⃣ Corrige cet algorithme : image[i] = model + image[i]",
+        "6️⃣ Pourquoi cet algorithme ne peut pas générer une vidéo réaliste ?"
+    ]
+];
+
+let stepIndex = 0;
+let timeLeft = 30;
+let timerInterval;
+
+function loadQuestions() {
+    const qDiv = document.getElementById("questions");
+    qDiv.innerHTML = "";
+
+    steps[stepIndex].forEach(q => {
+        qDiv.innerHTML += `
+            <label>${q}</label>
+            <textarea rows="3"></textarea>
+        `;
+    });
+
+    startTimer();
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 30;
+    document.getElementById("timer").innerText = "⏳ 30 s";
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = "⏳ " + timeLeft + " s";
+
+        if (timeLeft <= 0) {
+            denyAccess();
+        }
+    }, 1000);
+}
+
+function nextStep() {
+    const inputs = document.querySelectorAll("textarea");
+    for (let t of inputs) {
+        if (t.value.trim() === "") {
+            denyAccess();
+            return;
+        }
+    }
+
+    stepIndex++;
+    if (stepIndex >= steps.length) {
+        denyAccess(); // Refus final quoi qu'il arrive 😈
+    } else {
+        loadQuestions();
+    }
+}
+
+function denyAccess() {
+    clearInterval(timerInterval);
+    document.getElementById("questions").style.display = "none";
+    document.querySelector("button").style.display = "none";
+    document.getElementById("timer").style.display = "none";
+    document.getElementById("result").style.display = "block";
+}
+
+loadQuestions();
+</script>
+
+</body>
+</html>
